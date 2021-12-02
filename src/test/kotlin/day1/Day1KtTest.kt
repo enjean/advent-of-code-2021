@@ -25,4 +25,24 @@ internal class Day1KtTest {
 
         assertEquals(7, result)
     }
+
+    @Test
+    fun `Part 2`() {
+        val input = listOf(
+            199,
+            200,
+            208,
+            210,
+            200,
+            207,
+            240,
+            269,
+            260,
+            263
+        )
+
+        val result = countIncreasesOverSlidingWindows(input)
+
+        assertEquals(5, result)
+    }
 }

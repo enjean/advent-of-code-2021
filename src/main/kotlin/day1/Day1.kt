@@ -8,9 +8,21 @@ fun countIncreases(depthMeasurements: List<Int>): Int =
         value to newCount
     }.second
 
+fun countIncreasesOverSlidingWindows(depthMeasurements: List<Int>): Int =
+    depthMeasurements.mapIndexedNotNull { index, measurement ->
+        if (index == 0 || index == 1) {
+            null
+        } else {
+            measurement + depthMeasurements[index - 1] + depthMeasurements[index - 2]
+        }
+    }.let { windowValues -> countIncreases(windowValues) }
+
 fun main() {
     val depthMeasurements = ParseUtil.inputLines(1).map { it.toInt() }
 
     val numIncreases = countIncreases(depthMeasurements)
     println("Part 1 = $numIncreases")
+
+    val numIncreasesOverWindows = countIncreasesOverSlidingWindows(depthMeasurements)
+    println("Part 2 = $numIncreasesOverWindows")
 }
