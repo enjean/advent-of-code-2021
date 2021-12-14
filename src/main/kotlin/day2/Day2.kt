@@ -23,4 +23,12 @@ fun main() {
     }
 
     println("Part 1 = ${endingPosition.horizontalPosition * endingPosition.depth}")
+
+    val startingPosition2 = SubLocationWithAim(horizontalPosition = 0, depth = 0, aim = 0)
+
+    val endingPosition2 = commands.fold(startingPosition2) { position, command ->
+        position.applyCommand(command)
+    }
+
+    println("Part 2 = ${endingPosition2.horizontalPosition * endingPosition2.depth}")
 }
