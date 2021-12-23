@@ -7,7 +7,22 @@ import org.junit.jupiter.api.Assertions.*
 internal class Day3KtTest {
 
     @Test
-    fun `calculateRates example`() {
+    fun `power consumption data`() {
+        val powerConsumptionData = calculatePowerConsumptionData(diagnosticReport)
+
+        assertEquals(22, powerConsumptionData.gammaRate)
+        assertEquals(9, powerConsumptionData.epsilonRate)
+    }
+
+    @Test
+    fun `life support data`() {
+        val lifeSupportData = calculateLifeSupportData(diagnosticReport)
+
+        assertEquals(23, lifeSupportData.oxygenGeneratorRating)
+        assertEquals(10, lifeSupportData.c02ScrubberRating)
+    }
+
+    private companion object {
         val diagnosticReport = listOf(
             "00100",
             "11110",
@@ -22,10 +37,5 @@ internal class Day3KtTest {
             "00010",
             "01010",
         )
-
-        val powerConsumptionData = calculateRates(diagnosticReport)
-
-        assertEquals(22, powerConsumptionData.gammaRate)
-        assertEquals(9, powerConsumptionData.epsilonRate)
     }
 }
