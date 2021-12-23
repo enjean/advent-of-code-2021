@@ -66,7 +66,7 @@ internal class Day4KtTest {
     }
 
     @Test
-    fun `Find Bingo`(){
+    fun `Play Bingo`(){
         val game = BingoGame(
             numbersDrawn = listOf(7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1),
             boards = listOf(
@@ -94,9 +94,14 @@ internal class Day4KtTest {
             )
         )
 
-        val result = findBingo(game)
+        val winningBoards = playBingoGame(game)
 
-        assertEquals(188, result.sumOfUnmarkedNumbers)
-        assertEquals(24, result.winningNumber)
+        val firstWin = winningBoards.first()
+        assertEquals(188, firstWin.sumOfUnmarkedNumbers)
+        assertEquals(24, firstWin.winningNumber)
+
+        val lastWin = winningBoards.last()
+        assertEquals(148, lastWin.sumOfUnmarkedNumbers)
+        assertEquals(13, lastWin.winningNumber)
     }
 }

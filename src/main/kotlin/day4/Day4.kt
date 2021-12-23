@@ -15,33 +15,48 @@ fun parseGame(inputLines: List<String>): BingoGame {
     return BingoGame(numbersDrawn, boards)
 }
 
-data class BingoResult(
+data class WinningBoard (
     val sumOfUnmarkedNumbers: Int,
     val winningNumber: Int
 )
 
-fun findBingo(bingoGame: BingoGame): BingoResult =
-    findBingoStep(bingoGame.boards, bingoGame.numbersDrawn, emptySet())
+data class BingoGameState(
+    val remainingBoards: List<BingoBoard>,
+    val numbersDrawn: Set<Int>,
+    val winningBoards: List<WinningBoard>
+)
 
-private fun findBingoStep(boards: List<BingoBoard>, numbersLeftToDraw: List<Int>, numbersDrawn: Set<Int>): BingoResult {
-    val numberDrawn = numbersLeftToDraw.first()
-    val newNumbersDrawn = numbersDrawn + numberDrawn
-    boards.forEach { board ->
-        board.rowsAndColumns.forEach { bingoSet ->
-            if (newNumbersDrawn.containsAll(bingoSet)) {
-                return BingoResult(
-                    sumOfUnmarkedNumbers = board.rows.flatten().filterNot { newNumbersDrawn.contains(it) }.sum(),
-                    winningNumber = numberDrawn
-                )
+fun playBingoGame(bingoGame: BingoGame): List<WinningBoard> =
+    bingoGame.numbersDrawn.fold(BingoGameState(bingoGame.boards, emptySet(), emptyList())) { gameState, number ->
+        val newNumbersDrawn = gameState.numbersDrawn + number
+        val boardState = gameState.remainingBoards.fold(emptyList<BingoBoard>() to emptyList<BingoBoard>()) { boardStateSoFar, board ->
+            if(board.rowsAndColumns.any { newNumbersDrawn.containsAll(it) }) {
+                boardStateSoFar.first.plus(board) to boardStateSoFar.second
+            } else {
+                boardStateSoFar.first to boardStateSoFar.second.plus(board)
             }
         }
-    }
-    return findBingoStep(boards, numbersLeftToDraw.drop(1), newNumbersDrawn)
-}
+        BingoGameState(
+            remainingBoards = boardState.second,
+            numbersDrawn = newNumbersDrawn,
+            winningBoards = gameState.winningBoards.plus(boardState.first.map { winningBoard ->
+                WinningBoard(
+                    sumOfUnmarkedNumbers = winningBoard.rows.flatten().filterNot { newNumbersDrawn.contains(it) }.sum(),
+                    winningNumber = number
+                )
+            })
+        )
+    }.winningBoards
+
 
 fun main() {
     val game = parseGame(ParseUtil.inputLines(4))
 
-    val result = findBingo(game)
-    println("Part 1 = ${result.sumOfUnmarkedNumbers * result.winningNumber}")
+    val result = playBingoGame(game)
+
+    val firstWin = result.first()
+    println("Part 1 = ${firstWin.sumOfUnmarkedNumbers * firstWin.winningNumber}")
+
+    val lastWin = result.last()
+    println("Part 2 = ${lastWin.sumOfUnmarkedNumbers * lastWin.winningNumber}")
 }
